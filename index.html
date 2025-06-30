@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLASHLEARN – Your AI Learning Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Poppins', 'Quicksand', 'system-ui', 'sans-serif'],
+                        'display': ['Dancing Script', 'Playfair Display', 'Cinzel', 'serif'],
+                        'storybook': ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        'fantasy': {
+                            50: '#FCEAFF',   // Fairy Dust Pink (background)
+                            100: '#FFDEFA',  // Cloud Rose (buttons, highlights)
+                            200: '#C8B6FF',  // Lavender Mist (accents)
+                            300: '#B8F2E6',  // Mint Whisper (hover states, sparkles)
+                            400: '#A8E6CF',  // Soft mint
+                            500: '#9B7EDE',  // Medium lavender
+                            600: '#8B6FD1',  // Darker lavender
+                            700: '#7B5FC4',  // Deep lavender
+                            800: '#2E1A47',  // Midnight Plum (text, deep contrast)
+                            900: '#1A0F2E',  // Darker plum
+                        },
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            50: '#fdf4ff',
+                            100: '#fae8ff',
+                            200: '#f5d0fe',
+                            300: '#f0abfc',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                            800: '#86198f',
+                            900: '#701a75',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.8s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-gentle': 'bounceGentle 2s infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'scale-in': 'scaleIn 0.5s ease-out',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(30px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(14, 165, 233, 0.3)' },
+                            '100%': { boxShadow: '0 0 30px rgba(14, 165, 233, 0.6)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', 'Poppins', 'Lato', 'Nunito', sans-serif; 
+            background: linear-gradient(135deg, #FFE5F1 0%, #a2ebf4 25%, #F3E5F5 50%, #E8F5E8 75%, #FFF3E0 100%);
+            min-height: 100vh;
+            color: #7B5FC4 !important;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        .dark body {
+            background: linear-gradient(135deg, #2E1A47 0%, #1A0F2E 100%);
+            color: #fff !important;
+        }
+        h1, h2, h3, .brand-logo {
+            font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+            color: #2E1A47 !important;
+            text-shadow: none;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            line-height: 1.2;
+            transition: background 0.4s, color 0.4s, -webkit-text-fill-color 0.4s;
+        }
+        h1:hover, h2:hover, h3:hover {
+            background: linear-gradient(90deg, #FF69B4 0%, #38bdf8 50%, #8B5A8B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent !important;
+        }
+        .brand-logo {
+            font-weight: 700;
+        }
+        /* Fairy gradient nav bar */
+        nav.glass-morphism {
+            background: linear-gradient(90deg, #FCEAFF 0%, #FFDEFA 30%, #C8B6FF 60%, #B8F2E6 100%) !important;
+            border-bottom: 2px solid #FFDEFA;
+            box-shadow: 0 4px 24px #C8B6FF33;
+        }
+        .dark nav.glass-morphism {
+            background: linear-gradient(90deg, #2E1A47 0%, #8B6FD1 100%) !important;
+            border-bottom: 2px solid #8B6FD1;
+        }
+        h1 { font-size: 2.8rem; margin-bottom: 0.5em; }
+        h2 { font-size: 2.2rem; margin-bottom: 0.5em; }
+        h3 { font-size: 1.5rem; margin-bottom: 0.5em; }
+        .dark h1, .dark h2, .dark h3, .dark .brand-logo {
+            color: #FFD700 !important;
+            text-shadow: 0 2px 12px #87CEEB99, 0 1px 0 #2E1A47;
+        }
+        .gradient-text {
+            background: transparent !important;
+            color: #2E1A47 !important;
+            -webkit-text-fill-color: initial !important;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+        .dark .gradient-text {
+            background: linear-gradient(90deg, #FFD700 0%, #87CEEB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo-text {
+            font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            background: none !important;
+            color: #2E1A47 !important;
+            -webkit-text-fill-color: initial !important;
+            text-shadow: none;
+            letter-spacing: 2px;
+        }
+        .dark .logo-text {
+            background: linear-gradient(90deg, #FFD700 0%, #98FB98 30%, #87CEEB 60%, #FFB6C1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        }
+        /* Remove all colored text classes and unify text color */
+        [class*="text-"] {
+            color: #222 !important;
+        }
+        .dark [class*="text-"] {
+            color: #fff !important;
+        }
+        /* Subheadings and labels */
+        label, .learning-tool-label, .template-btn, .writing-tool-label, .card h4, .card h5 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        /* Inputs and buttons */
+        input, textarea, select {
+            font-family: 'Poppins', 'Quicksand', 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #222;
+        }
+        .dark input, .dark textarea, .dark select {
+            color: #fff !important;
+            background: #222 !important;
+        }
+        button, .magic-btn, .hover-lift {
+            font-family: 'Poppins', 'Quicksand', 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        /* Tooltips and small text */
+        [data-tooltip], .text-xs, .text-sm {
+            font-size: 0.95rem !important;
+            font-weight: 400;
+            color: #444 !important;
+        }
+        .dark [data-tooltip], .dark .text-xs, .dark .text-sm {
+            color: #FFD700 !important;
+            text-shadow: 0 1px 8px #FFD70099, 0 0 2px #2E1A47;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 3px solid #FFB6C1;
+            box-shadow: 0 0 30px 8px #87CEEB66, 0 4px 20px 0 #98FB9866;
+        }
+        .dark .glass-effect {
+            background: rgba(46, 26, 71, 0.95);
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 30px 8px #87CEEB66, 0 4px 20px 0 #FFD70044;
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .magic-btn, .hover-lift {
+            background: linear-gradient(90deg, #FFD700 0%, #98FB98 40%, #87CEEB 70%, #FFB6C1 100%);
+            color: #8B5A8B;
+            border: 3px solid #FFD700;
+            box-shadow: 0 0 25px #98FB98, 0 0 10px #87CEEB;
+            transition: box-shadow 0.3s, background 0.3s;
+            text-shadow: 0 2px 8px #8B5A8B99, 0 1px 0 #fff;
+        }
+        
+        .magic-btn:hover, .hover-lift:hover {
+            box-shadow: 0 0 40px #FFD700, 0 0 20px #FFB6C1;
+            background: linear-gradient(90deg, #FFB6C1 0%, #87CEEB 50%, #98FB98 100%);
+        }
+        .card, .bg-white, .dark .bg-gray-800 {
+            background: rgba(255, 255, 255, 0.92) !important;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 40px 0 #87CEEB33, 0 4px 16px 0 #98FB9833;
+            border: 2px solid #FFB6C1;
+        }
+        .dark .card, .dark .bg-gray-800 {
+            background: rgba(46, 26, 71, 0.98) !important;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 40px 0 #FFD70033, 0 4px 16px 0 #87CEEB33;
+            border: 2px solid #FFD700;
+        }
+        .text-gray-900, .text-gray-700 {
+            color: #8B5A8B !important;
+            text-shadow: 0 1px 6px #fff8, 0 0 4px #87CEEB33;
+        }
+        .dark .text-gray-900, .dark .text-gray-700 {
+            color: #FFD700 !important;
+        }
+        .text-gray-600, .text-gray-500 {
+            color: #9370DB !important;
+        }
+        .dark .text-gray-600, .dark .text-gray-500 {
+            color: #87CEEB !important;
+        }
+        .cyber-border {
+            position: relative;
+        }
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            background: linear-gradient(45deg, #FFD700, #98FB98, #FFD700);
+            border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+        }
+        .sparkle-bg {
+            pointer-events: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        /* Logo Styles */
+        .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #FFD700 0%, #98FB98 50%, #87CEEB 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+        
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: logo-shine 3s ease-in-out infinite;
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: none !important;
+            color: #2E1A47 !important;
+            -webkit-text-fill-color: initial !important;
+            text-shadow: none;
+        }
+        
+        @keyframes logo-shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        }
+        
+        /* Robot Animation Keyframes */
+        @keyframes robot-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(2deg); }
+            50% { transform: translateY(-5px) rotate(-1deg); }
+            75% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        @keyframes robot-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes robot-glow {
+            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 40px rgba(152, 251, 152, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+        }
+        
+        @keyframes robot-scan {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes robot-blink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        
+        /* Enhanced Professional Learning Tools */
+        .central-learning-orb {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .learning-orb-glow {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, #FFB6C1 0%, #87CEEB 25%, #98FB98 50%, #FFD700 75%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(20px);
+            opacity: 0.6;
+            animation: robot-glow 4s ease-in-out infinite alternate;
+        }
+        
+        .learning-orb-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #FFB6C1;
+            box-shadow: 
+                0 0 30px #FFB6C1,
+                0 0 60px #87CEEB,
+                0 0 90px #98FB98,
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: robot-float 6s ease-in-out infinite;
+        }
+        
+        .floating-learning-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        .floating-learning-tool {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-learning-tool::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(139, 90, 139, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        
+        .floating-learning-tool:hover::before {
+            opacity: 1;
+        }
+        
+        .learning-tool-glow {
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            filter: blur(15px);
+            animation: robot-glow 3s ease-in-out infinite alternate;
+        }
+        
+        .learning-tool-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .learning-tool-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8B5A8B;
+            margin-top: 4px;
+        }
+        
+        /* Individual Learning Tool Positions and Colors */
+        .study-tool {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: robot-float 8s ease-in-out infinite;
+        }
+        .study-tool .learning-tool-glow { background: radial-gradient(circle, #FFB6C1 0%, transparent 70%); }
+        .study-tool .learning-tool-content { border-color: #FFB6C1; }
+        
+        .quiz-tool {
+            top: 15%;
+            right: 10%;
+            animation: robot-float 8s ease-in-out infinite 1s;
+        }
+        .quiz-tool .learning-tool-glow { background: radial-gradient(circle, #87CEEB 0%, transparent 70%); }
+        .quiz-tool .learning-tool-content { border-color: #87CEEB; }
+        
+        .flashcard-tool {
+            bottom: 15%;
+            right: 10%;
+            animation: robot-float 8s ease-in-out infinite 2s;
+        }
+        .flashcard-tool .learning-tool-glow { background: radial-gradient(circle, #98FB98 0%, transparent 70%); }
+        .flashcard-tool .learning-tool-content { border-color: #98FB98; }
+        
+        .practice-tool {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: robot-float 8s ease-in-out infinite 3s;
+        }
+        .practice-tool .learning-tool-glow { background: radial-gradient(circle, #FFD700 0%, transparent 70%); }
+        .practice-tool .learning-tool-content { border-color: #FFD700; }
+        
+        .progress-tool {
+            bottom: 15%;
+            left: 10%;
+            animation: robot-float 8s ease-in-out infinite 4s;
+        }
+        .progress-tool .learning-tool-glow { background: radial-gradient(circle, #DDA0DD 0%, transparent 70%); }
+        .progress-tool .learning-tool-content { border-color: #DDA0DD; }
+        
+        .ai-tutor-tool {
+            top: 15%;
+            left: 10%;
+            animation: robot-float 8s ease-in-out infinite 5s;
+        }
+        .ai-tutor-tool .learning-tool-glow { background: radial-gradient(circle, #F0E68C 0%, transparent 70%); }
+        .ai-tutor-tool .learning-tool-content { border-color: #F0E68C; }
+        
+        .writing-tool {
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: robot-float 8s ease-in-out infinite 6s;
+        }
+        .writing-tool .learning-tool-glow { background: radial-gradient(circle, #FFA07A 0%, transparent 70%); }
+        .writing-tool .learning-tool-content { border-color: #FFA07A; }
+        
+        /* Hover Effects */
+        .floating-learning-tool:hover {
+            transform: scale(1.1);
+            z-index: 5;
+        }
+        
+        .floating-learning-tool:hover .learning-tool-content {
+            box-shadow: 0 12px 48px rgba(255, 215, 0, 0.3);
+        }
+        
+        /* Robot Eye Animation */
+        .robot-eye {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: robot-blink 3s infinite;
+        }
+        
+        .robot-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 8px;
+            height: 8px;
+            background: #8B5A8B;
+            border-radius: 50%;
+            animation: robot-scan 2s ease-in-out infinite;
+        }
+        
+        /* Robot Scanning Line */
+        .robot-scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            animation: robot-scan 3s ease-in-out infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .central-learning-orb {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .floating-learning-container {
+                width: 400px;
+                height: 400px;
+            }
+            
+            .floating-learning-tool {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .learning-tool-content {
+                font-size: 10px;
+            }
+            
+            .learning-tool-label {
+                font-size: 10px;
+            }
+        }
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes speech-bubble-fade {
+            0% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+            60% { opacity: 1; transform: scale(1.05) translateY(0); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .speech-bubble {
+            opacity: 0;
+            animation: speech-bubble-fade 1.2s 0.5s forwards;
+        }
+        .typewriter {
+            display: inline-block;
+            overflow: hidden;
+            border-right: .12em solid #FFD700;
+            white-space: nowrap;
+            letter-spacing: .05em;
+            animation: typewriter 1.2s steps(6, end) 1.1s forwards, blink-caret .75s step-end infinite;
+            width: 0;
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #FFD700; }
+        }
+        .made-by-footer {
+          text-align: center;
+          margin-top: 0.5rem;
+          letter-spacing: 1px;
+          font-weight: 600;
+          text-shadow: 0 1px 8px #87CEEB99, 0 0 2px #fff;
+          transition: color 0.3s, text-shadow 0.3s;
+        }
+        .dark .made-by-footer {
+          color: #FFD700 !important;
+          text-shadow: 0 2px 12px #FFD70099, 0 1px 0 #2E1A47;
+        }
+        
+        /* Comprehensive Dark Mode Text Visibility */
+        .dark p, .dark span, .dark div, .dark label, .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+            color: #fff !important;
+        }
+        
+        .dark .text-purple-700, .dark .text-purple-600, .dark .text-purple-500 {
+            color: #FFD700 !important;
+            text-shadow: 0 1px 4px #FFD70099;
+        }
+        
+        .dark .text-cyan-300, .dark .text-cyan-200, .dark .text-cyan-400 {
+            color: #87CEEB !important;
+            text-shadow: 0 1px 4px #87CEEB99;
+        }
+        
+        .dark .text-gray-300, .dark .text-gray-400, .dark .text-gray-500 {
+            color: #FFD700 !important;
+            text-shadow: 0 1px 4px #FFD70099;
+        }
+        
+        .dark .text-white {
+            color: #fff !important;
+            text-shadow: 0 1px 4px #fff99;
+        }
+        
+        .dark .text-black, .dark .text-gray-900, .dark .text-gray-800 {
+            color: #FFD700 !important;
+            text-shadow: 0 1px 4px #FFD70099;
+        }
+        
+        /* Dark mode for specific content areas */
+        .dark #challenge-content, .dark #tip-content, .dark #quiz-content {
+            color: #FFD700 !important;
+        }
+        
+        .dark #grammar-results, .dark #generated-content, .dark #template-content, .dark #writing-analysis {
+            color: #FFD700 !important;
+        }
+        
+        .dark .learning-tool-label {
+            color: #FFD700 !important;
+            text-shadow: 0 1px 4px #FFD70099;
+        }
+        
+        /* Dark mode for placeholder text */
+        .dark input::placeholder, .dark textarea::placeholder {
+            color: #87CEEB !important;
+            opacity: 0.8;
+        }
+        
+        /* Dark mode for any remaining dark text */
+        .dark * {
+            color: inherit;
+        }
+        
+        .dark body *:not(.text-white):not(.text-cyan-300):not(.text-cyan-200):not(.text-cyan-400):not(.text-purple-700):not(.text-purple-600):not(.text-purple-500) {
+            color: #FFD700 !important;
+        }
+    </style>
+    <div class="sparkle-bg" id="sparkle-bg"></div>
+</head>
+<body class="min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="glass-morphism sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3 animate-fade-in">
+                    <div class="logo-container">
+                        <div class="logo-icon">
+                            <span class="text-white font-bold text-xl">⚡</span>
+                    </div>
+                    </div>
+                    <h1 class="logo-text">FLASHLEARN</h1>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="hidden md:block">
+                        <div class="flex items-baseline space-x-8">
+                            <a href="#" class="text-gray-300 hover:text-primary-400 px-3 py-2 text-sm font-medium transition-all duration-300 hover-lift">Home</a>
+                            <a href="#" class="text-gray-300 hover:text-primary-400 px-3 py-2 text-sm font-medium transition-all duration-300 hover-lift">Courses</a>
+                            <a href="#" class="text-gray-300 hover:text-primary-400 px-3 py-2 text-sm font-medium transition-all duration-300 hover-lift">Contact</a>
+                        </div>
+                    </div>
+                    <button 
+                        id="dark-mode-toggle"
+                        class="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-400 hover-lift"
+                        aria-label="Toggle dark mode"
+                    >
+                        <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Hero Section -->
+        <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-20 relative overflow-hidden">
+            <!-- Animated background elements -->
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full blur-3xl animate-float opacity-30"></div>
+                <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-to-br from-blue-200 to-cyan-200 rounded-full blur-3xl animate-float opacity-30" style="animation-delay: -2s;"></div>
+                <div class="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-to-br from-green-200 to-yellow-200 rounded-full blur-3xl animate-float opacity-30" style="animation-delay: -4s;"></div>
+            </div>
+
+            <div class="max-w-6xl mx-auto text-center relative z-10">
+                <!-- Enhanced Learning Tools Container -->
+                <div class="relative">
+                    <!-- Central Robot Image with Speech Bubble Animation -->
+                    <div class="flex flex-col items-center justify-center mb-8 relative" style="min-height: 320px;">
+                        <div style="position:relative; width: 260px; max-width: 90vw; margin: 0 auto;">
+                            <img src="robot.jpg" alt="Robot" style="width:100%; height:auto; display:block; border-radius: 32px; box-shadow: 0 8px 40px #FFD70055, 0 4px 16px #98FB9855;" />
+                            <!-- Speech Bubble -->
+                            <div class="speech-bubble animate-speech-bubble" style="position:absolute; left:60%; top:10%; min-width:70px; background:#fff; color:#2E1A47; border-radius:18px; padding:12px 22px; font-size:1.3rem; font-weight:600; box-shadow:0 2px 12px #FFD70033; border:2px solid #FFD700; z-index:2;">
+                                <span class="typewriter">Hi!</span>
+                                <span class="bubble-tail" style="position:absolute; left:18px; top:100%; width:24px; height:24px; overflow:hidden;"><svg width="24" height="24"><polygon points="0,0 24,0 12,24" fill="#fff" stroke="#FFD700" stroke-width="2"/></svg></span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span style="font-family:'Poppins', 'Montserrat', 'Inter', sans-serif; font-size:2.8rem; font-weight:700; color:#2E1A47; letter-spacing:2px;">FLASHLEARN</span>
+                        </div>
+                        <div class="mt-6 mb-8">
+                            <p class="text-xl font-semibold text-purple-700 italic" style="font-family:'Poppins', 'Montserrat', 'Inter', sans-serif;">
+                                "Empower your mind, unlock your potential, and let AI guide your learning journey."
+                            </p>
+                        </div>
+                    </div>
+                    <h2 class="text-3xl font-bold gradient-text mb-2">AI Learning Hub</h2>
+                    <p class="text-lg text-purple-700">Choose a learning tool to begin your educational adventure</p>
+                    <!-- Robot Status Indicators -->
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                        </div>
+                    </div>
+
+                <!-- Floating Learning Tools -->
+                <div class="floating-learning-container">
+                    <!-- Study Tool -->
+                    <div class="floating-learning-tool study-tool" data-tooltip="Study & Learn">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">📖</div>
+                            <span class="learning-tool-label">Study</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 0s;"></div>
+                            </div>
+                            </div>
+                        </div>
+
+                    <!-- Quiz Tool -->
+                    <div class="floating-learning-tool quiz-tool" data-tooltip="Test Knowledge">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">❓</div>
+                            <span class="learning-tool-label">Quiz</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 1s;"></div>
+                            </div>
+                            </div>
+                        </div>
+
+                    <!-- Flashcard Tool -->
+                    <div class="floating-learning-tool flashcard-tool" data-tooltip="Memory Cards">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">🗂️</div>
+                            <span class="learning-tool-label">Flashcards</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 2s;"></div>
+                            </div>
+                            </div>
+                        </div>
+
+                    <!-- Practice Tool -->
+                    <div class="floating-learning-tool practice-tool" data-tooltip="Practice Skills">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">🎯</div>
+                            <span class="learning-tool-label">Practice</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 3s;"></div>
+                            </div>
+                            </div>
+                        </div>
+
+                    <!-- Progress Tool -->
+                    <div class="floating-learning-tool progress-tool" data-tooltip="Track Progress">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">📊</div>
+                            <span class="learning-tool-label">Progress</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 4s;"></div>
+                            </div>
+                            </div>
+                        </div>
+
+                    <!-- AI Tutor Tool -->
+                    <div class="floating-learning-tool ai-tutor-tool" data-tooltip="AI Assistant">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">🤖</div>
+                            <span class="learning-tool-label">AI Tutor</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 5s;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Writing Assistant Tool -->
+                    <div class="floating-learning-tool writing-tool" data-tooltip="Writing Assistant">
+                        <div class="learning-tool-glow"></div>
+                        <div class="learning-tool-content">
+                            <div class="text-4xl mb-2 animate-robot-pulse">✍️</div>
+                            <span class="learning-tool-label">Writing</span>
+                            <!-- Robot scanning effect -->
+                            <div class="absolute inset-0 rounded-full overflow-hidden">
+                                <div class="robot-scan-line" style="animation-delay: 6s;"></div>
+                            </div>
+                        </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Section -->
+                <div class="mt-16 max-w-2xl mx-auto space-y-8">
+                    <div class="relative group">
+                <div class="absolute inset-0 bg-gradient-to-r from-yellow-200/30 to-green-200/30 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                        <div class="relative">
+                    <!-- Robot scanning effect on input -->
+                    <div class="absolute inset-0 rounded-2xl overflow-hidden">
+                        <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                    </div>
+                    
+                            <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+                        <div class="text-yellow-500 animate-robot-pulse">🤖</div>
+                            </div>
+                            <input 
+                                type="text" 
+                                id="prompt-input"
+                        placeholder="Ask your AI learning assistant anything..."
+                        class="w-full pl-16 pr-6 py-6 bg-white/80 border-2 border-yellow-400 rounded-2xl focus:ring-4 focus:ring-yellow-300 focus:border-yellow-400 outline-none transition-all duration-300 text-purple-800 placeholder-purple-400 text-lg backdrop-blur-sm hover-lift"
+                            >
+                        </div>
+                    </div>
+                    
+                    <button 
+                        id="inspire-btn"
+                class="w-full bg-gradient-to-r from-yellow-400 via-green-400 to-blue-400 hover:from-yellow-500 hover:via-green-500 hover:to-blue-500 text-white font-bold py-6 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-300 shadow-xl hover:shadow-2xl text-xl hover-lift animate-scale-in relative overflow-hidden"
+            >
+                <!-- Robot scanning effect on button -->
+                <div class="absolute inset-0">
+                    <div class="robot-scan-line" style="animation-delay: 1s;"></div>
+                </div>
+                
+                <span class="flex items-center justify-center space-x-3 relative z-10">
+                    <span class="animate-robot-pulse text-2xl">🤖</span>
+                    <span class="text-xl">Start Learning Now</span>
+                    <span class="animate-robot-pulse text-2xl" style="animation-delay: 0.5s;">⚡</span>
+                        </span>
+                    </button>
+            </div>
+        </div>
+
+    <!-- Daily Learning Section -->
+        <div class="py-20 px-4 sm:px-6 lg:px-8 relative">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16 animate-slide-up">
+                    <div class="inline-flex items-center space-x-4 mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-green-500 rounded-2xl flex items-center justify-center shadow-xl neon-glow animate-robot-pulse">
+                        <span class="text-3xl">🤖</span>
+            </div>
+                    <h2 class="text-5xl font-bold gradient-text">AI Learning Boost</h2>
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-xl neon-glow animate-robot-pulse" style="animation-delay: 0.5s;">
+                        <span class="text-3xl">⚡</span>
+                        </div>
+                        </div>
+                <p class="text-xl text-purple-700 max-w-2xl mx-auto">Get your daily dose of AI-powered learning inspiration, study tips, and educational challenges</p>
+                    <button 
+                        id="daily-boost-btn"
+                    class="mt-8 bg-gradient-to-r from-yellow-500 to-green-500 hover:from-yellow-600 hover:to-green-600 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow animate-scale-in text-lg relative overflow-hidden"
+                >
+                    <!-- Robot scanning effect on button -->
+                    <div class="absolute inset-0">
+                        <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                    </div>
+                    
+                    <span class="flex items-center space-x-2 relative z-10">
+                        <span class="animate-robot-pulse">🤖</span>
+                        <span>Get AI Learning Boost</span>
+                        <span class="animate-robot-pulse" style="animation-delay: 0.3s;">⚡</span>
+                        </span>
+                    </button>
+                </div>
+                
+                <div id="daily-boost-container" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Challenge Card -->
+                    <div class="group relative animate-slide-up" style="animation-delay: 0.2s;">
+                        <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-500/20 to-green-500/20 rounded-full blur-2xl"></div>
+                            
+                            <div class="flex items-center justify-between mb-6 relative z-10">
+                                <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-green-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">🎯</span>
+                                    </div>
+                                <h3 class="text-2xl font-bold text-purple-700">AI Learning Challenge</h3>
+                                </div>
+                            <span class="text-3xl animate-robot-float">🤖</span>
+                            </div>
+                        <div id="challenge-content" class="text-purple-600 relative z-10">
+                            <p class="text-center py-8 text-lg">Click "Get AI Learning Boost" to receive your AI-powered learning challenge</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tip Card -->
+                    <div class="group relative animate-slide-up" style="animation-delay: 0.4s;">
+                        <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-full blur-2xl"></div>
+                            
+                            <div class="flex items-center justify-between mb-6 relative z-10">
+                                <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">💡</span>
+                                    </div>
+                                <h3 class="text-2xl font-bold text-purple-700">AI Study Tip</h3>
+                                </div>
+                            <span class="text-3xl animate-robot-pulse">⚡</span>
+                            </div>
+                        <div id="tip-content" class="text-purple-600 relative z-10">
+                            <p class="text-center py-8 text-lg">Click "Get AI Learning Boost" to receive an AI-powered study tip</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Card -->
+                    <div class="group relative animate-slide-up" style="animation-delay: 0.6s;">
+                        <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-2xl"></div>
+                            
+                            <div class="flex items-center justify-between mb-6 relative z-10">
+                                <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">🧠</span>
+                                    </div>
+                                <h3 class="text-2xl font-bold text-purple-700">AI Knowledge Quiz</h3>
+                                </div>
+                            <span class="text-3xl animate-robot-float">🎓</span>
+                            </div>
+                        <div id="quiz-content" class="text-purple-600 relative z-10">
+                            <p class="text-center py-8 text-lg">Click "Get AI Learning Boost" to take the AI-powered quiz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Writing Section -->
+    <div class="py-20 px-4 sm:px-6 lg:px-8 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 animate-slide-up">
+                <div class="inline-flex items-center space-x-4 mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-xl neon-glow animate-robot-pulse">
+                        <span class="text-3xl">✍️</span>
+                    </div>
+                    <h2 class="text-5xl font-bold gradient-text">Professional Writing Hub</h2>
+                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl neon-glow animate-robot-pulse" style="animation-delay: 0.5s;">
+                        <span class="text-3xl">📝</span>
+                    </div>
+                </div>
+                <p class="text-xl text-purple-700 max-w-3xl mx-auto">Enhance your writing skills with AI-powered tools, professional templates, grammar checking, and content generation assistance</p>
+            </div>
+            
+            <!-- Writing Tools Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <!-- Grammar Checker -->
+                <div class="group relative animate-slide-up" style="animation-delay: 0.1s;">
+                    <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/20 to-blue-500/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="flex items-center justify-between mb-6 relative z-10">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">🔍</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-purple-700">Grammar Checker</h3>
+                            </div>
+                            <span class="text-3xl animate-robot-float">📊</span>
+                        </div>
+                        <div class="relative z-10">
+                            <textarea 
+                                id="grammar-text"
+                                placeholder="Paste your text here for grammar and style analysis..."
+                                class="w-full h-32 p-4 bg-white/80 border-2 border-green-400 rounded-xl focus:ring-4 focus:ring-green-300 focus:border-green-400 outline-none transition-all duration-300 text-purple-800 placeholder-purple-400 text-sm backdrop-blur-sm resize-none"
+                            ></textarea>
+                            <button 
+                                id="check-grammar-btn"
+                                class="mt-4 w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-sm relative overflow-hidden"
+                            >
+                                <div class="absolute inset-0">
+                                    <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                                </div>
+                                <span class="flex items-center justify-center space-x-2 relative z-10">
+                                    <span class="animate-robot-pulse">🔍</span>
+                                    <span>Check Grammar & Style</span>
+                                </span>
+                            </button>
+                            <div id="grammar-results" class="mt-4 text-sm text-purple-600"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Generator -->
+                <div class="group relative animate-slide-up" style="animation-delay: 0.2s;">
+                    <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="flex items-center justify-between mb-6 relative z-10">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">🚀</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-purple-700">Content Generator</h3>
+                            </div>
+                            <span class="text-3xl animate-robot-pulse">⚡</span>
+                        </div>
+                        <div class="relative z-10">
+                            <select id="content-type" class="w-full p-3 bg-white/80 border-2 border-blue-400 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-400 outline-none transition-all duration-300 text-purple-800 text-sm backdrop-blur-sm mb-4">
+                                <option value="">Select content type...</option>
+                                <option value="blog">Blog Post</option>
+                                <option value="email">Professional Email</option>
+                                <option value="report">Business Report</option>
+                                <option value="proposal">Project Proposal</option>
+                                <option value="summary">Executive Summary</option>
+                                <option value="social">Social Media Post</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                id="content-topic"
+                                placeholder="Enter your topic or key points..."
+                                class="w-full p-3 bg-white/80 border-2 border-blue-400 rounded-xl focus:ring-4 focus:ring-blue-300 focus:border-blue-400 outline-none transition-all duration-300 text-purple-800 placeholder-purple-400 text-sm backdrop-blur-sm mb-4"
+                            >
+                            <button 
+                                id="generate-content-btn"
+                                class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-sm relative overflow-hidden"
+                            >
+                                <div class="absolute inset-0">
+                                    <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                                </div>
+                                <span class="flex items-center justify-center space-x-2 relative z-10">
+                                    <span class="animate-robot-pulse">🚀</span>
+                                    <span>Generate Content</span>
+                                </span>
+                            </button>
+                            <div id="generated-content" class="mt-4 text-sm text-purple-600"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Writing Templates -->
+                <div class="group relative animate-slide-up" style="animation-delay: 0.3s;">
+                    <div class="glass-morphism rounded-3xl p-8 shadow-xl hover-lift cyber-border overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-2xl"></div>
+                        
+                        <div class="flex items-center justify-between mb-6 relative z-10">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                    <span class="text-2xl animate-robot-pulse">📋</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-purple-700">Writing Templates</h3>
+                            </div>
+                            <span class="text-3xl animate-robot-float">📄</span>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="template-btn bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-xs" data-template="cover-letter">
+                                    📝 Cover Letter
+                                </button>
+                                <button class="template-btn bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-xs" data-template="resume">
+                                    📄 Resume
+                                </button>
+                                <button class="template-btn bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-xs" data-template="proposal">
+                                    📊 Proposal
+                                </button>
+                                <button class="template-btn bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-xs" data-template="email">
+                                    📧 Email
+                                </button>
+                            </div>
+                            <div id="template-content" class="mt-4 text-sm text-purple-600"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Writing Assistant -->
+            <div class="glass-morphism rounded-3xl shadow-xl cyber-border p-8 animate-slide-up">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-bold gradient-text mb-4">AI Writing Assistant</h3>
+                    <p class="text-purple-700">Get real-time writing suggestions, style improvements, and professional feedback</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Writing Input -->
+                    <div class="space-y-4">
+                        <label class="block text-purple-700 font-semibold">Your Text:</label>
+                        <textarea 
+                            id="writing-input"
+                            placeholder="Write or paste your content here for AI analysis and suggestions..."
+                            class="w-full h-64 p-4 bg-white/80 border-2 border-yellow-400 rounded-xl focus:ring-4 focus:ring-yellow-300 focus:border-yellow-400 outline-none transition-all duration-300 text-purple-800 placeholder-purple-400 text-sm backdrop-blur-sm resize-none"
+                        ></textarea>
+                        <div class="flex space-x-4">
+                            <button 
+                                id="analyze-writing-btn"
+                                class="flex-1 bg-gradient-to-r from-yellow-500 to-green-500 hover:from-yellow-600 hover:to-green-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-yellow-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-sm relative overflow-hidden"
+                            >
+                                <div class="absolute inset-0">
+                                    <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                                </div>
+                                <span class="flex items-center justify-center space-x-2 relative z-10">
+                                    <span class="animate-robot-pulse">🔍</span>
+                                    <span>Analyze Writing</span>
+                                </span>
+                            </button>
+                            <button 
+                                id="improve-writing-btn"
+                                class="flex-1 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/30 shadow-xl hover:shadow-2xl hover-lift neon-glow text-sm relative overflow-hidden"
+                            >
+                                <div class="absolute inset-0">
+                                    <div class="robot-scan-line" style="animation-delay: 0.5s;"></div>
+                                </div>
+                                <span class="flex items-center justify-center space-x-2 relative z-10">
+                                    <span class="animate-robot-pulse">✨</span>
+                                    <span>Improve Text</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Writing Analysis -->
+                    <div class="space-y-4">
+                        <label class="block text-purple-700 font-semibold">AI Analysis & Suggestions:</label>
+                        <div id="writing-analysis" class="h-64 p-4 bg-white/80 border-2 border-yellow-400 rounded-xl text-purple-800 text-sm overflow-y-auto">
+                            <div class="text-center text-purple-600 py-8">
+                                <div class="text-4xl mb-4 animate-robot-float">✍️</div>
+                                <p>Your AI writing analysis will appear here</p>
+                                <p class="text-xs mt-2">Click "Analyze Writing" to get started</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-xs text-purple-600">
+                            <span id="word-count">Words: 0</span>
+                            <span id="reading-level">Reading Level: -</span>
+                            <span id="tone-analysis">Tone: -</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="glass-morphism rounded-3xl shadow-xl cyber-border p-8 animate-slide-up">
+            <h2 class="text-4xl font-bold text-cyan-300 mb-8 text-center">Your AI-Generated Learning Content</h2>
+                <div 
+                    id="results-container" 
+                class="min-h-80 bg-slate-800/20 rounded-2xl border-2 border-dashed border-cyan-400/30 flex items-center justify-center backdrop-blur-sm relative overflow-hidden"
+            >
+                <!-- Robot scanning effect on results container -->
+                <div class="absolute inset-0">
+                    <div class="robot-scan-line" style="animation-delay: 2s;"></div>
+                </div>
+                
+                <div class="text-center p-12 relative z-10">
+                    <div class="text-8xl mb-6 animate-robot-float">🤖</div>
+                    <p class="text-cyan-200 text-xl">
+                        Enter a learning topic and click "Start Learning Now" to see your AI-generated educational content
+                    </p>
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+<footer class="glass-morphism mt-auto border-t border-cyan-400/20 animate-slide-up">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-4 mb-6">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                    <span class="text-white font-bold text-xl brand-logo">F</span>
+                    </div>
+                <h3 class="text-2xl font-bold gradient-text brand-logo">FLASHLEARN</h3>
+                </div>
+            <p class="text-cyan-300 mb-6">Your AI Learning Assistant</p>
+            <div class="flex justify-center space-x-8 text-sm text-cyan-400">
+                <span class="animate-fade-in" style="animation-delay: 0.2s;">🤖 AI-Powered</span>
+                <span class="animate-fade-in" style="animation-delay: 0.4s;">📚 Learning</span>
+                <span class="animate-fade-in" style="animation-delay: 0.6s;">⚡ Innovation</span>
+                </div>
+            <p class="mt-6 text-cyan-500 text-sm animate-fade-in" style="animation-delay: 0.8s;">&copy; 2024 FLASHLEARN. All rights reserved.</p>
+            <p class="text-cyan-300 text-xs animate-fade-in made-by-footer" style="animation-delay: 1.2s;">Made by Mahnoor Hussain</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Gemini API Configuration
+        const GEMINI_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+        // Enhanced functionality for the input and button
+        document.addEventListener('DOMContentLoaded', function() {
+            const promptInput = document.getElementById('prompt-input');
+            const inspireBtn = document.getElementById('inspire-btn');
+            const resultsContainer = document.getElementById('results-container');
+
+            // Function to call Gemini API
+            async function callGeminiAPI(prompt) {
+                try {
+                    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                text: `Provide 3 learning topics or study suggestions related to: ${prompt}. Include a brief explanation for each topic and suggest a suitable color theme (as HEX codes) that represents the learning mood.`
+                                }]
+                            }]
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error.message || 'API returned an error');
+                    }
+
+                    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+                        throw new Error('No response content received from API');
+                    }
+
+                    return data.candidates[0].content.parts[0].text;
+
+                } catch (error) {
+                    console.error('Gemini API Error:', error);
+                    throw error;
+                }
+            }
+
+            // Function to parse and format the API response into cards
+            function parseResponseToCards(text) {
+                const lines = text.split('\n').filter(line => line.trim());
+                const cards = [];
+                let currentCard = null;
+                let currentExplanation = '';
+                let currentColors = '';
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    
+                if (/^\d+\.|^•|^-\s|^Topic|^Learning|^Study|^Subject/i.test(line)) {
+                        if (currentCard) {
+                            cards.push({
+                                title: currentCard,
+                                explanation: currentExplanation.trim(),
+                                colors: currentColors.trim()
+                            });
+                        }
+                        
+                        currentCard = line.replace(/^\d+\.\s*|^•\s*|^-\s*/, '').trim();
+                        currentExplanation = '';
+                        currentColors = '';
+                    } else if (line.toLowerCase().includes('hex') || line.toLowerCase().includes('color') || line.toLowerCase().includes('palette')) {
+                        const hexColors = line.match(/#[0-9A-Fa-f]{6}/g) || [];
+                        currentColors = hexColors.join(', ');
+                    } else if (line.length > 0 && !currentCard) {
+                        currentCard = line;
+                    } else if (line.length > 0 && currentCard) {
+                        currentExplanation += (currentExplanation ? ' ' : '') + line;
+                    }
+                }
+
+                if (currentCard) {
+                    cards.push({
+                        title: currentCard,
+                        explanation: currentExplanation.trim(),
+                        colors: currentColors.trim()
+                    });
+                }
+
+                if (cards.length === 0) {
+                    return [{
+                    title: 'Learning Topic',
+                        explanation: text,
+                        colors: '#0ea5e9, #d946ef, #0ea5e9'
+                    }];
+                }
+
+                return cards;
+            }
+
+            // Function to create color swatches with copy functionality
+            function createColorSwatchesWithCopy(colors) {
+                if (!Array.isArray(colors) || colors.length === 0) {
+                    return '<p class="text-gray-400 text-sm">No colors provided</p>';
+                }
+
+                return `
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        ${colors.map((color, index) => `
+                            <div class="group cursor-pointer" onclick="copyColorToClipboard('${color}', this)">
+                                <div class="relative">
+                                    <div 
+                                        class="w-full h-16 rounded-lg border-2 border-white/20 shadow-lg hover:shadow-xl transition-all duration-200 group-hover:scale-105" 
+                                        style="background-color: ${color}"
+                                    ></div>
+                                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        <div class="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
+                                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-center">
+                                    <p class="text-sm font-mono text-gray-300 group-hover:text-white transition-colors duration-200">${color}</p>
+                                    <p class="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-200">Click to copy</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Function to copy color to clipboard
+            function copyColorToClipboard(color, element) {
+                const tempInput = document.createElement('input');
+                tempInput.value = color;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+
+                const originalText = element.querySelector('p:last-child').textContent;
+                element.querySelector('p:last-child').textContent = 'Copied!';
+                element.querySelector('p:last-child').classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    element.querySelector('p:last-child').textContent = originalText;
+                    element.querySelector('p:last-child').classList.remove('text-green-400');
+                }, 2000);
+            }
+
+            // Function to display results
+            function displayResults(cards) {
+                const cardsHTML = cards.map((card, index) => `
+                    <div class="glass-morphism rounded-2xl p-8 shadow-xl hover-lift cyber-border animate-slide-up" style="animation-delay: ${index * 0.1}s;">
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                                <span class="text-2xl">${['📚', '❓', '🗂️'][index] || '🚀'}</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white">${card.title}</h3>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <p class="text-gray-300 leading-relaxed">${card.explanation}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold text-white mb-4">Color Palette:</h4>
+                            ${createColorSwatchesWithCopy(card.colors.split(', '))}
+                        </div>
+                    </div>
+                `).join('');
+
+                resultsContainer.innerHTML = `
+                    <div class="space-y-8">
+                        ${cardsHTML}
+                    </div>
+                `;
+            }
+
+            // Function to show loading state
+            function showLoading() {
+                resultsContainer.innerHTML = `
+                <div class="text-center p-12 relative z-10">
+                        <div class="inline-flex items-center space-x-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full animate-spin"></div>
+                        <span class="text-xl text-cyan-300">🤖 AI is analyzing your request...</span>
+                                    </div>
+                    <p class="text-cyan-400">Processing learning content with advanced AI algorithms</p>
+                    <div class="flex justify-center space-x-2 mt-4">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                    </div>
+                                </div>
+                `;
+            }
+
+            // Function to show error state
+            function showError(message) {
+                resultsContainer.innerHTML = `
+                <div class="text-center p-12 relative z-10">
+                    <div class="text-6xl mb-6 animate-robot-float">🤖</div>
+                    <h3 class="text-2xl font-bold text-red-400 mb-4">AI System Error</h3>
+                    <p class="text-cyan-300 mb-6">${message}</p>
+                    <button onclick="location.reload()" class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 hover-lift">
+                        🤖 Retry AI Connection
+                            </button>
+                    </div>
+                `;
+            }
+
+            // Event listener for the inspire button
+            inspireBtn.addEventListener('click', async function() {
+                const prompt = promptInput.value.trim();
+                
+                if (!prompt) {
+                alert('🤖 Please enter a learning topic for AI analysis!');
+                    return;
+                }
+
+                if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                showError('Please add your Gemini API key to enable AI functionality.');
+                    return;
+                }
+
+                showLoading();
+                inspireBtn.disabled = true;
+            inspireBtn.innerHTML = '<span class="flex items-center space-x-2 relative z-10"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>🤖 AI Processing...</span></span>';
+
+                try {
+                    const response = await callGeminiAPI(prompt);
+                    const cards = parseResponseToCards(response);
+                    displayResults(cards);
+                } catch (error) {
+                    console.error('Error:', error);
+                showError('AI connection failed. Please check your API key and try again.');
+                } finally {
+                    inspireBtn.disabled = false;
+                inspireBtn.innerHTML = '<span class="flex items-center justify-center space-x-3 relative z-10"><span class="animate-robot-pulse text-2xl">🤖</span><span class="text-xl">Start Learning Now</span><span class="animate-robot-pulse text-2xl" style="animation-delay: 0.5s;">⚡</span></span>';
+                }
+            });
+
+            // Event listener for Enter key on input
+            promptInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    inspireBtn.click();
+                }
+            });
+
+            // Daily Boost functionality
+            const dailyBoostBtn = document.getElementById('daily-boost-btn');
+            const challengeContent = document.getElementById('challenge-content');
+            const tipContent = document.getElementById('tip-content');
+            const quizContent = document.getElementById('quiz-content');
+
+            dailyBoostBtn.addEventListener('click', async function() {
+                if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                alert('🤖 Please add your Gemini API key to enable AI functionality.');
+                    return;
+                }
+
+                dailyBoostBtn.disabled = true;
+            dailyBoostBtn.innerHTML = '<span class="flex items-center space-x-2 relative z-10"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>🤖 AI Loading...</span></span>';
+
+                try {
+                    // Challenge
+                    const challengeResponse = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: 'Give me a random learning topic or study suggestion for today. Make it creative and inspiring. Keep it under 100 words.'
+                                }]
+                            }]
+                        })
+                    });
+                    const challengeData = await challengeResponse.json();
+                    const challenge = challengeData.candidates[0].content.parts[0].text;
+
+                    // Tip
+                    const tipResponse = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                text: 'Give me a random study tip for today. Make it practical and actionable. Keep it under 100 words.'
+                            }]
+                        }]
+                    })
+                });
+                    const tipData = await tipResponse.json();
+                    const tip = tipData.candidates[0].content.parts[0].text;
+
+                    // Quiz
+                    const quizResponse = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                text: 'Give me a multiple choice learning quiz question with 4 options (A, B, C, D) and the correct answer. Make it about learning principles.'
+                                }]
+                            }]
+                        })
+                    });
+                    const quizData = await quizResponse.json();
+                    const quiz = quizData.candidates[0].content.parts[0].text;
+
+                    // Display results
+                    challengeContent.innerHTML = `
+                        <div class="space-y-4">
+                        <p class="text-cyan-200 leading-relaxed">${challenge}</p>
+                            <div class="flex justify-center">
+                            <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-medium rounded-lg">
+                                🤖 AI Learning Challenge
+                                </span>
+                    </div>
+                </div>
+            `;
+
+                    tipContent.innerHTML = `
+                        <div class="space-y-4">
+                        <p class="text-cyan-200 leading-relaxed">${tip}</p>
+                            <div class="flex justify-center">
+                            <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white text-sm font-medium rounded-lg">
+                                🤖 AI Study Tip
+                                </span>
+                    </div>
+                </div>
+            `;
+
+                    quizContent.innerHTML = `
+                <div class="space-y-4">
+                        <p class="text-cyan-200 leading-relaxed">${quiz}</p>
+                            <div class="flex justify-center">
+                            <span class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-sm font-medium rounded-lg">
+                                🤖 AI Knowledge Quiz
+                                </span>
+                    </div>
+                </div>
+            `;
+
+            } catch (error) {
+                console.error('Daily Boost Error:', error);
+                alert('🤖 AI connection failed. Please check your API key and try again.');
+            } finally {
+                    dailyBoostBtn.disabled = false;
+                dailyBoostBtn.innerHTML = '<span class="flex items-center space-x-2 relative z-10"><span class="animate-robot-pulse">🤖</span><span>Get AI Learning Boost</span><span class="animate-robot-pulse" style="animation-delay: 0.3s;">⚡</span></span>';
+            }
+        });
+
+            // Dark mode toggle functionality
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            darkModeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('light-mode');
+                const isLight = document.body.classList.contains('light-mode');
+                
+                if (isLight) {
+                    document.body.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
+                    document.body.classList.add('text-gray-900');
+            } else {
+                    document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
+                    document.body.classList.remove('text-gray-900');
+                }
+        });
+
+        // Professional Writing Features
+        const grammarText = document.getElementById('grammar-text');
+        const checkGrammarBtn = document.getElementById('check-grammar-btn');
+        const grammarResults = document.getElementById('grammar-results');
+        
+        const contentType = document.getElementById('content-type');
+        const contentTopic = document.getElementById('content-topic');
+        const generateContentBtn = document.getElementById('generate-content-btn');
+        const generatedContent = document.getElementById('generated-content');
+        
+        const templateBtns = document.querySelectorAll('.template-btn');
+        const templateContent = document.getElementById('template-content');
+        
+        const writingInput = document.getElementById('writing-input');
+        const analyzeWritingBtn = document.getElementById('analyze-writing-btn');
+        const improveWritingBtn = document.getElementById('improve-writing-btn');
+        const writingAnalysis = document.getElementById('writing-analysis');
+        const wordCount = document.getElementById('word-count');
+        const readingLevel = document.getElementById('reading-level');
+        const toneAnalysis = document.getElementById('tone-analysis');
+
+        // Grammar Checker
+        checkGrammarBtn.addEventListener('click', async function() {
+            const text = grammarText.value.trim();
+            if (!text) {
+                alert('Please enter text to check grammar and style.');
+                return;
+            }
+
+            if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                alert('Please add your Gemini API key to enable AI functionality.');
+                return;
+            }
+
+            checkGrammarBtn.disabled = true;
+            checkGrammarBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Checking...</span></span>';
+
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Analyze this text for grammar, spelling, punctuation, and style improvements. Provide specific suggestions with corrections:\n\n${text}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const analysis = data.candidates[0].content.parts[0].text;
+
+                grammarResults.innerHTML = `
+                    <div class="bg-green-100/80 border-2 border-green-400 rounded-xl p-4 text-green-800">
+                        <h4 class="font-bold mb-2">🤖 AI Grammar Analysis:</h4>
+                        <div class="text-sm whitespace-pre-line">${analysis}</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Grammar check error:', error);
+                grammarResults.innerHTML = `
+                    <div class="bg-red-100/80 border-2 border-red-400 rounded-xl p-4 text-red-800">
+                        <h4 class="font-bold mb-2">❌ Error:</h4>
+                        <p>Failed to check grammar. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                checkGrammarBtn.disabled = false;
+                checkGrammarBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><span class="animate-robot-pulse">🔍</span><span>Check Grammar & Style</span></span>';
+            }
+        });
+
+        // Content Generator
+        generateContentBtn.addEventListener('click', async function() {
+            const type = contentType.value;
+            const topic = contentTopic.value.trim();
+
+            if (!type || !topic) {
+                alert('Please select a content type and enter a topic.');
+                return;
+            }
+
+            if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                alert('Please add your Gemini API key to enable AI functionality.');
+                return;
+            }
+
+            generateContentBtn.disabled = true;
+            generateContentBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Generating...</span></span>';
+
+            try {
+                const prompts = {
+                    blog: `Write a professional blog post about: ${topic}. Include an engaging introduction, main points, and conclusion.`,
+                    email: `Write a professional email about: ${topic}. Use appropriate business tone and format.`,
+                    report: `Write a business report about: ${topic}. Include executive summary, key findings, and recommendations.`,
+                    proposal: `Write a project proposal about: ${topic}. Include objectives, methodology, timeline, and budget considerations.`,
+                    summary: `Write an executive summary about: ${topic}. Be concise and highlight key points.`,
+                    social: `Write an engaging social media post about: ${topic}. Include relevant hashtags and call-to-action.`
+                };
+
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompts[type]
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const content = data.candidates[0].content.parts[0].text;
+
+                generatedContent.innerHTML = `
+                    <div class="bg-blue-100/80 border-2 border-blue-400 rounded-xl p-4 text-blue-800">
+                        <h4 class="font-bold mb-2">🚀 Generated ${type.charAt(0).toUpperCase() + type.slice(1)}:</h4>
+                        <div class="text-sm whitespace-pre-line">${content}</div>
+                        <button onclick="copyToClipboard(this)" class="mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-xs transition-colors">
+                            📋 Copy to Clipboard
+                        </button>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Content generation error:', error);
+                generatedContent.innerHTML = `
+                    <div class="bg-red-100/80 border-2 border-red-400 rounded-xl p-4 text-red-800">
+                        <h4 class="font-bold mb-2">❌ Error:</h4>
+                        <p>Failed to generate content. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                generateContentBtn.disabled = false;
+                generateContentBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><span class="animate-robot-pulse">🚀</span><span>Generate Content</span></span>';
+            }
+        });
+
+        // Writing Templates
+        const templates = {
+            'cover-letter': `[Your Name]
+[Your Address]
+[City, State ZIP]
+[Your Email]
+[Your Phone]
+
+[Date]
+
+[Company Name]
+[Company Address]
+[City, State ZIP]
+
+Dear [Hiring Manager's Name],
+
+I am writing to express my strong interest in the [Position Title] position at [Company Name]. With my background in [relevant field] and passion for [industry/field], I am excited about the opportunity to contribute to your team.
+
+In my current role at [Current Company], I have successfully [key achievement or responsibility]. This experience has equipped me with [relevant skills] that align perfectly with the requirements of this position.
+
+I am particularly drawn to [Company Name] because of [specific reason - company values, projects, culture, etc.]. Your commitment to [company value/mission] resonates with my professional goals.
+
+I would welcome the opportunity to discuss how my skills and experience can contribute to [Company Name]'s continued success. Thank you for considering my application.
+
+Sincerely,
+[Your Name]`,
+
+            'resume': `[YOUR NAME]
+[Email] | [Phone] | [LinkedIn] | [Portfolio/Website]
+
+PROFESSIONAL SUMMARY
+[2-3 sentence summary of your professional background and key strengths]
+
+EXPERIENCE
+[Company Name] | [Position] | [Dates]
+• [Key achievement or responsibility]
+• [Key achievement or responsibility]
+• [Key achievement or responsibility]
+
+[Company Name] | [Position] | [Dates]
+• [Key achievement or responsibility]
+• [Key achievement or responsibility]
+• [Key achievement or responsibility]
+
+EDUCATION
+[Degree] | [University] | [Graduation Year]
+[Relevant coursework or honors]
+
+SKILLS
+[Technical Skills]: [List relevant technical skills]
+[Soft Skills]: [List relevant soft skills]
+[Languages]: [List languages if applicable]
+
+CERTIFICATIONS
+[Certification Name] | [Issuing Organization] | [Year]`,
+
+            'proposal': `PROJECT PROPOSAL
+
+Project Title: [Project Name]
+Date: [Date]
+Prepared by: [Your Name/Organization]
+
+EXECUTIVE SUMMARY
+[Brief overview of the project, objectives, and expected outcomes]
+
+BACKGROUND
+[Context and rationale for the project]
+
+OBJECTIVES
+• [Primary objective 1]
+• [Primary objective 2]
+• [Primary objective 3]
+
+METHODOLOGY
+[Detailed approach and methods to achieve objectives]
+
+TIMELINE
+[Project phases and milestones with dates]
+
+BUDGET
+[Detailed cost breakdown]
+
+DELIVERABLES
+[Specific outputs and outcomes]
+
+RISK ASSESSMENT
+[Potential challenges and mitigation strategies]
+
+CONCLUSION
+[Summary and next steps]`,
+
+            'email': `Subject: [Clear, Professional Subject Line]
+
+Dear [Recipient Name],
+
+I hope this email finds you well.
+
+[Main content - be clear, concise, and professional]
+
+[If requesting action, clearly state what you need]
+
+Thank you for your time and consideration.
+
+Best regards,
+[Your Name]
+[Your Title]
+[Your Company]
+[Your Contact Information]`
+        };
+
+        templateBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const templateType = this.dataset.template;
+                const template = templates[templateType];
+                
+                templateContent.innerHTML = `
+                    <div class="bg-purple-100/80 border-2 border-purple-400 rounded-xl p-4 text-purple-800">
+                        <h4 class="font-bold mb-2">📋 ${templateType.charAt(0).toUpperCase() + templateType.slice(1).replace('-', ' ')} Template:</h4>
+                        <textarea class="w-full h-48 p-3 bg-white/80 border border-purple-300 rounded-lg text-purple-800 text-sm resize-none" readonly>${template}</textarea>
+                        <button onclick="copyToClipboard(this)" class="mt-3 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg text-xs transition-colors">
+                            📋 Copy Template
+                        </button>
+                    </div>
+                `;
+            });
+        });
+
+        // Writing Analysis
+        analyzeWritingBtn.addEventListener('click', async function() {
+            const text = writingInput.value.trim();
+            if (!text) {
+                alert('Please enter text to analyze.');
+                return;
+            }
+
+            if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                alert('Please add your Gemini API key to enable AI functionality.');
+                return;
+            }
+
+            analyzeWritingBtn.disabled = true;
+            analyzeWritingBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Analyzing...</span></span>';
+
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Analyze this text for writing quality, tone, clarity, and provide specific improvement suggestions:\n\n${text}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const analysis = data.candidates[0].content.parts[0].text;
+
+                // Update word count and basic stats
+                const words = text.split(/\s+/).filter(word => word.length > 0).length;
+                const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0).length;
+                const avgWordsPerSentence = sentences > 0 ? (words / sentences).toFixed(1) : 0;
+
+                wordCount.textContent = `Words: ${words}`;
+                readingLevel.textContent = `Avg. Words/Sentence: ${avgWordsPerSentence}`;
+                toneAnalysis.textContent = `Sentences: ${sentences}`;
+
+                writingAnalysis.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-yellow-100/80 border-2 border-yellow-400 rounded-xl p-4 text-yellow-800">
+                            <h4 class="font-bold mb-2">🤖 AI Writing Analysis:</h4>
+                            <div class="text-sm whitespace-pre-line">${analysis}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Writing analysis error:', error);
+                writingAnalysis.innerHTML = `
+                    <div class="bg-red-100/80 border-2 border-red-400 rounded-xl p-4 text-red-800">
+                        <h4 class="font-bold mb-2">❌ Error:</h4>
+                        <p>Failed to analyze writing. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                analyzeWritingBtn.disabled = false;
+                analyzeWritingBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><span class="animate-robot-pulse">🔍</span><span>Analyze Writing</span></span>';
+            }
+        });
+
+        // Improve Writing
+        improveWritingBtn.addEventListener('click', async function() {
+            const text = writingInput.value.trim();
+            if (!text) {
+                alert('Please enter text to improve.');
+                return;
+            }
+
+            if (GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+                alert('Please add your Gemini API key to enable AI functionality.');
+                return;
+            }
+
+            improveWritingBtn.disabled = true;
+            improveWritingBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Improving...</span></span>';
+
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Improve this text for clarity, grammar, style, and professional tone while maintaining the original meaning:\n\n${text}`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                const improvedText = data.candidates[0].content.parts[0].text;
+
+                writingAnalysis.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="bg-green-100/80 border-2 border-green-400 rounded-xl p-4 text-green-800">
+                            <h4 class="font-bold mb-2">✨ Improved Version:</h4>
+                            <div class="text-sm whitespace-pre-line">${improvedText}</div>
+                            <button onclick="copyToClipboard(this)" class="mt-3 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-xs transition-colors">
+                                📋 Copy Improved Text
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Writing improvement error:', error);
+                writingAnalysis.innerHTML = `
+                    <div class="bg-red-100/80 border-2 border-red-400 rounded-xl p-4 text-red-800">
+                        <h4 class="font-bold mb-2">❌ Error:</h4>
+                        <p>Failed to improve writing. Please try again.</p>
+                    </div>
+                `;
+            } finally {
+                improveWritingBtn.disabled = false;
+                    improveWritingBtn.innerHTML = '<span class="flex items-center justify-center space-x-2 relative z-10"><span class="animate-robot-pulse">✨</span><span>Improve Text</span></span>';
+                }
+            });
+
+            // Real-time word count
+            writingInput.addEventListener('input', function() {
+                const text = this.value;
+                const words = text.split(/\s+/).filter(word => word.length > 0).length;
+                const sentences = text.split(/[.!?]+/).filter(sentence => sentence.trim().length > 0).length;
+                const avgWordsPerSentence = sentences > 0 ? (words / sentences).toFixed(1) : 0;
+
+                wordCount.textContent = `Words: ${words}`;
+                readingLevel.textContent = `Avg. Words/Sentence: ${avgWordsPerSentence}`;
+                toneAnalysis.textContent = `Sentences: ${sentences}`;
+            });
+        });
+
+        // Global function for color copying
+        function copyColorToClipboard(color, element) {
+            const tempInput = document.createElement('input');
+            tempInput.value = color;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const originalText = element.querySelector('p:last-child').textContent;
+            element.querySelector('p:last-child').textContent = 'Copied!';
+            element.querySelector('p:last-child').classList.add('text-green-400');
+                    
+                    setTimeout(() => {
+                element.querySelector('p:last-child').textContent = originalText;
+                element.querySelector('p:last-child').classList.remove('text-green-400');
+            }, 2000);
+        }
+
+        // Global function for copying content to clipboard
+        function copyToClipboard(element) {
+            const textToCopy = element.previousElementSibling ? 
+                element.previousElementSibling.textContent : 
+                element.parentElement.querySelector('textarea') ? 
+                element.parentElement.querySelector('textarea').value : 
+                element.parentElement.textContent;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const originalText = element.textContent;
+            element.textContent = '✅ Copied!';
+            element.classList.add('bg-green-500');
+            element.classList.remove('bg-blue-500', 'bg-purple-500', 'bg-green-500');
+            
+            setTimeout(() => {
+                element.textContent = originalText;
+                element.classList.remove('bg-green-500');
+                if (originalText.includes('Template')) {
+                    element.classList.add('bg-purple-500');
+                } else if (originalText.includes('Content')) {
+                    element.classList.add('bg-blue-500');
+                } else {
+                    element.classList.add('bg-green-500');
+                }
+            }, 2000);
+        }
+
+        // Sparkle animation for magical background
+        document.addEventListener('DOMContentLoaded', function() {
+            const sparkleBg = document.getElementById('sparkle-bg');
+            if (!sparkleBg) return;
+            // Fairy palette colors
+            const fairyColors = ['#FCEAFF', '#FFDEFA', '#C8B6FF', '#B8F2E6', '#FFD700', '#98FB98'];
+            for (let i = 0; i < 36; i++) {
+                const ball = document.createElement('div');
+                const color = fairyColors[Math.floor(Math.random() * fairyColors.length)];
+                const size = Math.random() * 14 + 8;
+                ball.style.position = 'absolute';
+                ball.style.left = Math.random() * 100 + 'vw';
+                ball.style.top = Math.random() * 100 + 'vh';
+                ball.style.width = ball.style.height = size + 'px';
+                ball.style.background = `radial-gradient(circle, ${color} 0%, ${color}99 60%, transparent 100%)`;
+                ball.style.opacity = Math.random() * 0.7 + 0.3;
+                ball.style.borderRadius = '50%';
+                ball.style.boxShadow = `0 0 12px 2px ${color}55`;
+                ball.style.pointerEvents = 'none';
+                ball.style.filter = 'blur(0.5px)';
+                // Floating animation
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 8;
+                const direction = Math.random() > 0.5 ? 1 : -1;
+                ball.animate([
+                    { transform: `translateY(0px) scale(1)` },
+                    { transform: `translateY(${direction * (Math.random() * 40 + 30)}px) scale(${1 + Math.random() * 0.2})` },
+                    { transform: `translateY(0px) scale(1)` }
+                ], {
+                    duration: duration * 1000,
+                    iterations: Infinity,
+                    direction: 'alternate',
+                    delay: delay * 1000
+                });
+                sparkleBg.appendChild(ball);
+            }
+        });
+    </script>
+</body>
+</html> 
